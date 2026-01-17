@@ -1,9 +1,6 @@
 const mongoose=require('mongoose');
 
 const Item=mongoose.model('Item',{
-    id:{
-        type:Number,
-    },
     type:{
         type:String,
     },
@@ -15,8 +12,10 @@ const Item=mongoose.model('Item',{
     },
     date:{
         type:Date,
+    },
+    image:{
+        type:String,
     }
-
 });
 
 module.exports=Item;

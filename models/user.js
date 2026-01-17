@@ -1,9 +1,6 @@
 const mongoose=require('mongoose');
 
 const User=mongoose.model('User',{
-    id:{
-        type:String,
-    },
     name:{
         type: String,
     },

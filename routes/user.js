@@ -29,10 +29,9 @@ async function sendVerificationEmail(email,token,subject,html){
 router.post('/add',async(req,res)=>{
     try{ 
         data= req.body; 
-        const email_exist = await User.findOne({email:data.email}); 
-        const id_exist= await User.findOne({id:data.id}); 
-        if (email_exist||id_exist){ 
-            res.status(401).send("email or id already exists"); 
+        const email_exist = await User.findOne({email:data.email});
+        if (email_exist){ 
+            res.status(401).send("email already exists"); 
         } 
         else{ 
             //genrate token

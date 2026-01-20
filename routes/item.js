@@ -17,11 +17,10 @@ const Item = require('../models/item');
         console.log("err= "+err);
     }
     }
-    
-    
 });
 
 const upload=multer({storage});
+
 router.post('/add',upload.any('image'),async (req,res)=>{
     try{
 
@@ -38,13 +37,19 @@ router.post('/add',upload.any('image'),async (req,res)=>{
     }
     
 });
-
-router.get('/getall',async(req,res)=>{
-    try{
-        items=await Item.find();
-        res.status(200).send(items);
+router.get('/get/:type', async (req, res) => {
+    try {
+        const type=req.params.type;
+        if(type==""){
+            const items=await Item.find();
+            res.status(200).send(items);
+        }
+        else{
+            const items=await Item.find({type});
+            res.status(200).send(items);
+        }
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         res.status(400).send(err);
     }
@@ -81,23 +86,6 @@ router.put('/updateId/:id',upload.any('image'),async(req,res)=>{
             }   
             const updatedItem=await Item.findByIdAndUpdate({_id:id},newData);
             filename='';
-            res.status(200).send(updatedItem);
-        }
-    }
-    catch(error){
-        res.status(400).send(error);
-    }
-});
-router.put('/update/:id',async(req,res)=>{
-    try{
-        const id=req.params.id;
-        const newData=req.body;
-        const item=await Item.findById({_id:id});
-        if(!item){
-            res.status(404).send("item not found ");
-        }
-        else{
-            const updatedItem=await Item.findByIdAndUpdate({_id:id},newData);
             res.status(200).send(updatedItem);
         }
     }

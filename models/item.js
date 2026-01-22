@@ -16,7 +16,14 @@ const Item=mongoose.model('Item',{
     },
     image:{
         type:String,
-    }
+    },
+    user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',            
+    required: true          
+  }
+},{
+  timestamps: true
 });
 
 module.exports=Item;

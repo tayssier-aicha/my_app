@@ -24,5 +24,4 @@ const User=mongoose.model('User',{
         type: Date,
     }
 });
-
 module.exports=User;

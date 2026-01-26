@@ -1,6 +1,6 @@
 const express=require('express');
 const router=express.Router();
- const multer=require('multer');
+const multer=require('multer');
 const Item = require('../models/item');
 
  let filename='';
@@ -57,15 +57,12 @@ router.get('/get', async (req, res) => {
       query.type = type; // 'lost' or 'found'
     }
 
-    // Find items + populate the 'user' field
     const items = await Item.find(query)
       .populate({
         path: 'user',
-        select: 'name'          // ← only bring username (add more fields if needed)
-        // Example with more fields:
-        // select: 'username email profilePicture'
+        select: 'name'          
       })
-      .lean();                      // optional: faster, returns plain JS objects
+      .lean();
 
     res.status(200).json(items);
 

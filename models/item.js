@@ -7,6 +7,7 @@ const itemSchema = new mongoose.Schema({
     required: true
   },
   description: String,
+  category:String,
   location: String,
   date: Date,
   image: String,

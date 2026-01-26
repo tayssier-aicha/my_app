@@ -16,8 +16,7 @@ async function sendVerificationEmail(email, token, subject = 'Verify Your Email'
     });
 
     const verifyUrl = `${process.env.VERIFY}${token}`;
-
-    //email template
+    
     const html = `
     <!DOCTYPE html>
     <html lang="en">
@@ -259,7 +258,6 @@ router.post('/login', async (req, res) => {
             email: user.email,
             isVerified: user.isVerified,
             name:user.name
-            // Avoid sending password or sensitive data
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -277,9 +275,6 @@ router.post('/login', async (req, res) => {
 });
 
 
-// ────────────────────────────────────────────────
-//                   FORGOT PASSWORD
-// ────────────────────────────────────────────────
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -293,7 +288,7 @@ router.post('/forgot-password', async (req, res) => {
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    // Security: always return same message (timing attack prevention)
+    
     if (!user || !user.isVerified) {
       return res.status(200).json({
         success: true,
@@ -310,11 +305,10 @@ router.post('/forgot-password', async (req, res) => {
       .digest('hex');
 
     user.resetPasswordToken = resetTokenHashed;
-    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 60 minutes
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
 
     await user.save({ validateBeforeSave: false });
 
-    // Send email with **plain** token (user gets the usable version)
     await sendPasswordResetEmail(user.email, resetTokenPlain);
 
     return res.status(200).json({

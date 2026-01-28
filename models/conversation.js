@@ -1,14 +1,14 @@
 const mongoose=require('mongoose');
 
 const convShema=new mongoose.Schema({
-    participants:{
+    participants:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    },
-    messages:{
+    }],
+    lastMessage:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message',
-    },
+    }],
     },
     { timestamps: true}
 );

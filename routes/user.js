@@ -8,11 +8,6 @@ const nodemailer=require('nodemailer');
 const { create } = require('../models/item');
 
 async function sendVerificationEmail(email, token, subject = 'Verify Your Email', isNew = false) {
-  
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "set (hidden)" : "missing");
-console.log("VERIFICATION URL base:", process.env.VERIFY);
-
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -185,7 +180,7 @@ router.post('/add', async (req, res) => {
 
         const usr = new User(data);
 
-        usr.verificationtoken = token;
+        usr.verificationToken = token;
         usr.isVerified = false; 
 
         // Hash password
@@ -208,13 +203,13 @@ router.post('/add', async (req, res) => {
 router.get('/verify/:token',async(req,res)=>{
     try{
         const token=req.params.token;
-        const user=await User.findOne({verificationtoken:token});
+        const user=await User.findOne({verificationToken:token});
         if(!user){
             return res.status(400).send("Invalid token");
         }
         else{
             user.isVerified=true;
-            user.verificationtoken=undefined;
+            user.verificationToken=undefined;
             await user.save();
             res.status(200).send("Email verified successfully");
             

@@ -8,6 +8,11 @@ const nodemailer=require('nodemailer');
 const { create } = require('../models/item');
 
 async function sendVerificationEmail(email, token, subject = 'Verify Your Email', isNew = false) {
+  
+  console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "set (hidden)" : "missing");
+console.log("VERIFICATION URL base:", process.env.VERIFY);
+
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -205,7 +210,7 @@ router.get('/verify/:token',async(req,res)=>{
         const token=req.params.token;
         const user=await User.findOne({verificationtoken:token});
         if(!user){
-            res.status(400).send("Invalid token");
+            return res.status(400).send("Invalid token");
         }
         else{
             user.isVerified=true;
@@ -227,7 +232,7 @@ router.post('/login', async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            res.status(401).send("Invalid email or password");
+            return res.status(401).send("Invalid email or password"); // ← ajouter return
         }
 
         if (!user.isVerified) {
@@ -250,20 +255,20 @@ router.post('/login', async (req, res) => {
 
         const validPass = await bcrypt.compare(password, user.password);
         if (!validPass) {
-            res.status(401).send("Invalid email or password");
+            return res.status(401).send("Invalid email or password"); // ← ajouter return
         }
 
         const payload = {
             _id: user._id,
             email: user.email,
             isVerified: user.isVerified,
-            name:user.name,
-            createdAt:user.createdAt,
+            name: user.name,
+            createdAt: user.createdAt,
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Login successful",
             user: payload,
             token
@@ -271,9 +276,10 @@ router.post('/login', async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Server error", error: err.message });
+        return res.status(500).json({ message: "Server error", error: err.message });
     }
 });
+
 
 
 router.post('/forgot-password', async (req, res) => {
@@ -419,7 +425,7 @@ router.put('/update/:id',async(req,res)=>{
         const data=req.body;  
         const existUser=await User.findById({_id:id});
         if(!existUser){
-            res.status(404).send("user not found");
+           return res.status(404).send("user not found");
         }
         else{
             if(data.password){
